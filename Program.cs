@@ -9,12 +9,13 @@ class Program
     {
         #region Config Builder
         // https://dotnetfullstackdev.medium.com/appsettings-in-net-core-the-game-changer-for-configurations-a994d842e34c
-        IConfiguration config = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory) // le dossier de l'exécutable
-            .AddJsonFile("appsettings.json", optional: false) // plante si le fichier manque
-            .Build();
+        IConfiguration config = ConfigUtils.GetConfig;
         #endregion
-        Console.WriteLine(config.GetConnectionString("Default"));
-        Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
+        if (config.GetValue<bool>("debugOutput"))
+        {
+            Console.WriteLine(ParserUtils.ParseCsv("/", config["dataPath"])[1][1]);
+            Console.WriteLine(config.GetConnectionString("Default"));
+            Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
+        }
     }
 }
