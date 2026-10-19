@@ -7,7 +7,6 @@ public interface ICustomerRepository
     List<Customer> GetAllCustomer();
     
     Customer ? GetCustomerById( Guid id);
-
     
 
 }
