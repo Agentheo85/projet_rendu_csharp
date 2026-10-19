@@ -20,3 +20,48 @@ Rendu sur Git, avec un beau readme, sans franglais, avec des commentaires et en 
     - dotnet add package Microsoft.EntityFrameworkCore.Design
     - dotnet add package Microsoft.Extensions.Configuration.EnvironmentVariables
     - dotnet add package Microsoft.Extensions.Hosting 
+
+# Base de données (Docker)
+La base PostgreSQL tourne dans un conteneur Docker défini dans `docker-compose.yml`.
+Les identifiants correspondent à la chaîne de connexion de `appsettings.json` :
+
+| Paramètre       | Valeur      |
+|-----------------|-------------|
+| Hôte            | localhost   |
+| Port            | 5433        |
+| Base            | concession  |
+| Utilisateur     | concession  |
+| Mot de passe    | concession  |
+
+Prérequis : Docker Desktop installé et démarré.
+
+## Démarrer la base
+```bash
+docker compose up -d
+```
+
+## Vérifier que la base est prête
+```bash
+docker compose ps
+```
+La colonne `STATUS` doit indiquer `healthy`.
+
+## Consulter les journaux
+```bash
+docker compose logs -f db
+```
+
+## Se connecter à la base en ligne de commande
+```bash
+docker compose exec db psql -U concession -d concession
+```
+
+## Arrêter la base (les données sont conservées)
+```bash
+docker compose down
+```
+
+## Arrêter la base et supprimer toutes les données
+```bash
+docker compose down -v
+```

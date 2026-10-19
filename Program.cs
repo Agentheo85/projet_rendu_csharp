@@ -68,12 +68,8 @@ class Program
             customer.FirstName = line.Split('@')[1];
 
             // la date est lue au format jj/mm/aaaa, puis mise en UTC (PostgreSQL refuse les dates sans fuseau)
-            DateTime birthDate = DateTime.ParseExact(
-                line.Split('@')[2],
-                "dd/MM/yyyy",
-                CultureInfo.InvariantCulture
-            );
-            customer.BirthDate = DateTime.SpecifyKind(birthDate, DateTimeKind.Utc);
+
+            customer.BirthDate = DateTimeUtils.ConvertToDateTime(line.Split('@')[2]);
 
             customer.Phone = line.Split('@')[3];
             customer.Email = line.Split('@')[4];

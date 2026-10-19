@@ -1,0 +1,25 @@
+# Base de données PostgreSQL du projet
+# Les identifiants et le port correspondent à la chaîne de connexion de appsettings.json
+services:
+  db:
+    image: postgres:17
+    container_name: concession_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: concession
+      POSTGRES_USER: concession
+      POSTGRES_PASSWORD: concession
+    ports:
+      # port 5433 sur la machine -> port 5432 dans le conteneur
+      - "5433:5432"
+    volumes:
+      # les données sont conservées entre deux redémarrages du conteneur
+      - concession_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U concession -d concession"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  concession_data:
