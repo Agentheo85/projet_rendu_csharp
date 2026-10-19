@@ -13,13 +13,16 @@ class Program
 {
     static void Main(string[] args)
     {
-        #region configuration
-        // lecture de appsettings.json, avec rechargement automatique si le fichier change
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
+        #region Config Builder
+        // https://dotnetfullstackdev.medium.com/appsettings-in-net-core-the-game-changer-for-configurations-a994d842e34c
+        IConfiguration configuration = ConfigUtils.GetConfig;
         #endregion
+        if (configuration.GetValue<bool>("debugOutput"))
+        {
+            Console.WriteLine(ParserUtils.ParseCsv("/", configuration["dataPath"])[1][1]);
+            Console.WriteLine(configuration.GetConnectionString("Default"));
+            Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
+        }
 
         #region hôte et services
         var host = Host.CreateDefaultBuilder(args)
@@ -27,7 +30,8 @@ class Program
             {
                 // la chaîne de connexion à PostgreSQL vient de appsettings.json
                 services.AddDbContext<DealershipDbContext>(options =>
-                    options.UseNpgsql(configuration.GetConnectionString("Default")));
+                    options.UseNpgsql(configuration.GetConnectionString("Default"))
+                );
 
                 services.AddTransient<DbConnection>();
                 services.AddTransient<ICustomerRepository, CustomerRepository>();
@@ -39,7 +43,10 @@ class Program
 
         #region csv
         // chemins des fichiers récupérés dans appsettings.json
-        String customerPath = Path.Combine(AppContext.BaseDirectory, configuration["ClientCsvPath"]!);
+        String customerPath = Path.Combine(
+            AppContext.BaseDirectory,
+            configuration["ClientCsvPath"]!
+        );
         String carPath = Path.Combine(AppContext.BaseDirectory, configuration["VoitureCsvPath"]!);
         #endregion
 
@@ -52,7 +59,8 @@ class Program
         for (int i = 1; i < customerLines.Length; i++)
         {
             String line = customerLines[i];
-            if (String.IsNullOrWhiteSpace(line)) continue;
+            if (String.IsNullOrWhiteSpace(line))
+                continue;
 
             Customer customer = new Customer();
 
@@ -60,7 +68,11 @@ class Program
             customer.FirstName = line.Split('@')[1];
 
             // la date est lue au format jj/mm/aaaa, puis mise en UTC (PostgreSQL refuse les dates sans fuseau)
-            DateTime birthDate = DateTime.ParseExact(line.Split('@')[2], "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            DateTime birthDate = DateTime.ParseExact(
+                line.Split('@')[2],
+                "dd/MM/yyyy",
+                CultureInfo.InvariantCulture
+            );
             customer.BirthDate = DateTime.SpecifyKind(birthDate, DateTimeKind.Utc);
 
             customer.Phone = line.Split('@')[3];
@@ -77,7 +89,8 @@ class Program
         for (int i = 1; i < carLines.Length; i++)
         {
             String line = carLines[i];
-            if (String.IsNullOrWhiteSpace(line)) continue;
+            if (String.IsNullOrWhiteSpace(line))
+                continue;
 
             Car car = new Car();
 
@@ -95,16 +108,5 @@ class Program
         using var scope = host.Services.CreateScope();
         DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
         #endregion
-       
-        #region Config Builder
-        // https://dotnetfullstackdev.medium.com/appsettings-in-net-core-the-game-changer-for-configurations-a994d842e34c
-        IConfiguration config = ConfigUtils.GetConfig;
-        #endregion
-        if (config.GetValue<bool>("debugOutput"))
-        {
-            Console.WriteLine(ParserUtils.ParseCsv("/", config["dataPath"])[1][1]);
-            Console.WriteLine(config.GetConnectionString("Default"));
-            Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
-        }
     }
 }
