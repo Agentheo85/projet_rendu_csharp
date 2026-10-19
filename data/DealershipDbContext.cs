@@ -1,24 +1,6 @@
 ﻿using Dealership.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration
-
-namespace Dealership.Data;
-
-public class DealershipDbContext : DbContext
-{
-    #region constructeur
-    // les options (dont la connexion PostgreSQL) sont fournies par l'hôte
-    public DealershipDbContext(DbContextOptions<DealershipDbContext> options) : base(options)
-    {
-    }
-    #endregion
-
-    #region tables
-    public DbSet<Customer> Customers { get; set; }
-    public DbSet<Car> Cars { get; set; }
-    #endregion
-
-    #region configuration du modèle
+using Microsoft.Extensions.Configuration;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
        
@@ -33,7 +15,7 @@ public class DealershipDbContext : DbContext
             .Property(car => car.Price)
             .HasPrecision(10, 2);
     }
-    #endregion
+    
 
     // --- Configuration de la connexion ---
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -50,4 +32,4 @@ public class DealershipDbContext : DbContext
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("Default"));
         }
     }
-}
+

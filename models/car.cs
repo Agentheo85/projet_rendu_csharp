@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+namespace Dealership.Models;
 
 [Table("car")]
 public class Car
@@ -23,9 +24,7 @@ public class Car
     [Column("price")]
     public decimal Price { get; set; }
 
-    [Column("IsSold")]
-    public decimal IsSold { get; set; }
-
-
+    [Column("sold")]
+    public bool Sold { get; set; }
     public List<Customer> Owners { get; set; } = [];
 }

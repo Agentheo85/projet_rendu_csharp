@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+namespace Dealership.Models;
 
 [Table("customer")]
 public class Customer
