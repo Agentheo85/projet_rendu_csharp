@@ -97,7 +97,7 @@ class Program
             car.Brand = line.Split('$')[0];
             car.Model = line.Split('$')[1];
             car.Year = Int32.Parse(line.Split('$')[2]);
-            car.PriceExcludingTax = Decimal.Parse(line.Split('$')[3], CultureInfo.InvariantCulture);
+            car.Price = Decimal.Parse(line.Split('$')[3], CultureInfo.InvariantCulture);
             car.Color = line.Split("$")[4];
             car.IsSold = line.Split("$")[5].Trim().ToLower() == "oui";
 
