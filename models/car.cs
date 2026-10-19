@@ -23,9 +23,7 @@ public class Car
     [Column("price")]
     public decimal Price { get; set; }
 
-    [Column("IsSold")]
-    public decimal IsSold { get; set; }
-
-
+    [Column("sold")]
+    public bool Sold { get; set; }
     public List<Customer> Owners { get; set; } = [];
 }

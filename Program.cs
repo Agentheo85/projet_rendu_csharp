@@ -1,10 +1,9 @@
-﻿using System.Data.Common;
-using System.Globalization;
-using Dealership;
-using Dealership.Data;
-using Dealership.Interfaces;
-using Dealership.Models;
-using Dealership.Repositories;
+﻿using System.Globalization;
+// using Dealership;
+// using Dealership.Data;
+// using Dealership.Interfaces;
+// using Dealership.Models;
+// using Dealership.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +11,68 @@ using Microsoft.Extensions.Hosting;
 
 class Program
 {
-    static void Main(string[] args)
+    static void InitDb()
+    {
+        IConfiguration configuration = ConfigUtils.GetConfig;
+
+        #region csv
+        string customerPath = Path.Combine(
+            AppContext.BaseDirectory,
+            configuration["dataPath"]!,
+            "client.csv"
+        ); // renvoie un path correcte
+        string carPath = Path.Combine(
+            AppContext.BaseDirectory,
+            configuration["dataPath"]!,
+            "voiture.csv"
+        );
+        #endregion
+
+        #region read Customer
+        List<string[]> customerBrutData = ParserUtils.ParseCsv("/", customerPath);
+        List<Customer> customers = new List<Customer>();
+
+        for (int i = 1; i < customerBrutData.Count; i++)
+        {
+            String[] data = customerBrutData[i];
+
+            Customer customer = new Customer();
+
+            customer.LastName = data[0];
+            customer.FirstName = data[1];
+
+            customer.BirthDate = DateTimeUtils.ConvertToDateTime(data[2]);
+
+            customer.Phone = data[3];
+            customer.Email = data[4];
+
+            customers.Add(customer);
+        }
+        #endregion
+        // voitures : Marque$Modele$Annee$Prix_HT$Couleur$Vendue
+
+        List<string[]> carsBrutData = ParserUtils.ParseCsv("$", carPath);
+        List<Car> cars = new List<Car>();
+
+        for (int i = 1; i < carsBrutData.Count; i++)
+        {
+            String[] data = carsBrutData[i];
+
+            Car car = new Car();
+
+            car.Brand = data[0];
+            car.Model = data[1];
+            car.Year = Int32.Parse(data[2]);
+            car.Price = Decimal.Parse(data[3], CultureInfo.InvariantCulture);
+            car.Color = data[4];
+            car.Sold = data[5].Trim().ToLower() == "oui";
+
+            cars.Add(car);
+        }
+        customers.ForEach(customer => Console.WriteLine(customer.GetFullName()));
+    }
+
+    static void Main()
     {
         #region Config Builder
         // https://dotnetfullstackdev.medium.com/appsettings-in-net-core-the-game-changer-for-configurations-a994d842e34c
@@ -20,90 +80,33 @@ class Program
         #endregion
         if (configuration.GetValue<bool>("debugOutput"))
         {
-            Console.WriteLine(ParserUtils.ParseCsv("/", configuration["dataPath"])[1][1]);
+            Console.WriteLine(
+                ParserUtils.ParseCsv("/", configuration["dataPath"] + "client.csv")[1][1]
+            );
             Console.WriteLine(configuration.GetConnectionString("Default"));
             Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
         }
+        InitDb();
+        // #region hôte et services
+        // var host = Host.CreateDefaultBuilder()
+        //     .ConfigureServices(services =>
+        //     {
+        //         // la chaîne de connexion à PostgreSQL vient de appsettings.json
+        //         services.AddDbContext<DealershipDbContext>(options =>
+        //             options.UseNpgsql(configuration.GetConnectionString("Default"))
+        //         );
 
-        #region hôte et services
-        var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(services =>
-            {
-                // la chaîne de connexion à PostgreSQL vient de appsettings.json
-                services.AddDbContext<DealershipDbContext>(options =>
-                    options.UseNpgsql(configuration.GetConnectionString("Default"))
-                );
+        //         services.AddTransient<DbConnection>();
+        //         services.AddTransient<ICustomerRepository, CustomerRepository>();
+        //         services.AddTransient<ICarRepository, CarRepository>();
+        //         services.AddTransient<Menu>();
+        //     })
+        //     .Build();
+        // #endregion
 
-                services.AddTransient<DbConnection>();
-                services.AddTransient<ICustomerRepository, CustomerRepository>();
-                services.AddTransient<ICarRepository, CarRepository>();
-                services.AddTransient<Menu>();
-            })
-            .Build();
-        #endregion
-
-        #region csv
-        // chemins des fichiers récupérés dans appsettings.json
-        String customerPath = Path.Combine(
-            AppContext.BaseDirectory,
-            configuration["ClientCsvPath"]!
-        );
-        String carPath = Path.Combine(AppContext.BaseDirectory, configuration["VoitureCsvPath"]!);
-        #endregion
-
-        // clients : Nom@Prénom@Date de naissance@Téléphone@Email
-        List<Customer> customers = new List<Customer>();
-
-        String[] customerLines = File.ReadAllLines(customerPath);
-
-        // i = 1 pour sauter la ligne d'en-tête
-        for (int i = 1; i < customerLines.Length; i++)
-        {
-            String line = customerLines[i];
-            if (String.IsNullOrWhiteSpace(line))
-                continue;
-
-            Customer customer = new Customer();
-
-            customer.LastName = line.Split('@')[0];
-            customer.FirstName = line.Split('@')[1];
-
-            // la date est lue au format jj/mm/aaaa, puis mise en UTC (PostgreSQL refuse les dates sans fuseau)
-
-            customer.BirthDate = DateTimeUtils.ConvertToDateTime(line.Split('@')[2]);
-
-            customer.Phone = line.Split('@')[3];
-            customer.Email = line.Split('@')[4];
-
-            customers.Add(customer);
-        }
-
-        // voitures : Marque$Modele$Annee$Prix_HT$Couleur$Vendue
-        List<Car> cars = new List<Car>();
-
-        String[] carLines = File.ReadAllLines(carPath);
-
-        for (int i = 1; i < carLines.Length; i++)
-        {
-            String line = carLines[i];
-            if (String.IsNullOrWhiteSpace(line))
-                continue;
-
-            Car car = new Car();
-
-            car.Brand = line.Split('$')[0];
-            car.Model = line.Split('$')[1];
-            car.Year = Int32.Parse(line.Split('$')[2]);
-            car.Price = Decimal.Parse(line.Split('$')[3], CultureInfo.InvariantCulture);
-            car.Color = line.Split("$")[4];
-            car.IsSold = line.Split("$")[5].Trim().ToLower() == "oui";
-
-            cars.Add(car);
-        }
-
-        #region enregistrement en base
-        using var scope = host.Services.CreateScope();
-        DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
-        #endregion
+        // #region enregistrement en base
+        // using var scope = host.Services.CreateScope();
+        // DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
+        // #endregion
     }
 }
