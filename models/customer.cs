@@ -19,8 +19,6 @@ public class Customer
     [Column("birthdate")]
     public DateTime BirthDate { get; set; }
 
-    [Column("height")]
-    public int Height { get; set; }
 
     [Column("phone")]
     public string Phone { get; set; }
