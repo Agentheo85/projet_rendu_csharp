@@ -14,6 +14,7 @@ class Program
             .AddJsonFile("appsettings.json", optional: false) // plante si le fichier manque
             .Build();
         #endregion
-        Console.Write(config.GetConnectionString("Default"));
+        Console.WriteLine(config.GetConnectionString("Default"));
+        Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
     }
 }
