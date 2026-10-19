@@ -1,58 +1,39 @@
-﻿using CoursSupDeVinci;
+﻿using Dealership.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration
 
-public class SchoolDbContext : DbContext
+namespace Dealership.Data;
+
+public class DealershipDbContext : DbContext
 {
-    // --- Tables principales ---
-    public DbSet<Classe> Classes { get; set; }
-    public DbSet<Person> Persons { get; set; }
-    public DbSet<Detail> Details { get; set; }
-
-    // --- Constructeur ---
-    public SchoolDbContext(DbContextOptions<SchoolDbContext> options)
-        : base(options)
+    #region constructeur
+    // les options (dont la connexion PostgreSQL) sont fournies par l'hôte
+    public DealershipDbContext(DbContextOptions<DealershipDbContext> options) : base(options)
     {
     }
-    
-    // Constructeur vide pour EF CLI
-    public SchoolDbContext() { }
+    #endregion
 
-    // --- Configuration des relations ---
+    #region tables
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Car> Cars { get; set; }
+    #endregion
+
+    #region configuration du modèle
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-        
-        modelBuilder.Entity<Classe>()
-            .Property(c => c.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
-        
-        modelBuilder.Entity<Person>()
-            .Property(p => p.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
-        
-        modelBuilder.Entity<Detail>()
-            .Property(d => d.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
+       
+        // EF crée une table de liaison, ici nommée explicitement
+        modelBuilder.Entity<Customer>()
+            .HasMany(customer => customer.Cars)
+            .WithMany(car => car.Customers)
+            .UsingEntity(liaison => liaison.ToTable("CustomerCars"));
 
-        // Relation Classe -> Person (1..n)
-        modelBuilder.Entity<Person>()
-            .HasOne(p => p.Classe)
-            .WithMany(c => c.Persons)
-            .HasForeignKey(p => p.IdClasse);
-
-        // Relation Detail -> Person (n..n)
-        // Table d'association "person_detail"
-        modelBuilder.Entity<Person>()
-            .HasMany(p => p.Details)
-            .WithMany(d => d.Persons)
-            .UsingEntity(j =>
-            {
-                j.ToTable("person_detail");
-                j.Property<Guid>("DetailsId").HasColumnName("id_detail");
-                j.Property<Guid>("PersonsId").HasColumnName("id_person");
-            });
+        // le prix est stocké avec 2 décimales (10 chiffres au total)
+        modelBuilder.Entity<Car>()
+            .Property(car => car.Price)
+            .HasPrecision(10, 2);
     }
+    #endregion
 
     // --- Configuration de la connexion ---
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -60,13 +41,13 @@ public class SchoolDbContext : DbContext
         // Charger la configuration manuellement
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(@"/Users/antosox/Projects/CoursSupDeVinci/CoursSupDeVinci/appsettings.json", 
+            .AddJsonFile(@"appsettings.json", 
                 optional: false, reloadOnChange: true)
             .Build();
         
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("Default"));
         }
     }
 }
