@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+namespace Dealership.Models;
+
 class Program
 {
     static void InitDb()
@@ -87,6 +89,7 @@ class Program
             Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
         }
         InitDb();
+        Menu.InitMenu("-");
         // #region hôte et services
         // var host = Host.CreateDefaultBuilder()
         //     .ConfigureServices(services =>
