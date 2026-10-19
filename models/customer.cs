@@ -12,6 +12,9 @@ public class Customer
     public string LastName { get; set; }
     public DateTime BirthDate { get; set; }
     public int Height { get; set; }
+    public string Phone { get; set; }
+
+    public List<Car> Cars { get; set; } = [];
 
     #endregion
 
