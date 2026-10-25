@@ -23,5 +23,11 @@ public class CustomerRepository : ICustomerRepository
         .Include(customer => customer.Cars)
             .FirstOrDefault(customer => customer.Id == id);
     }
+    public Customer? GetCustomerByFirstandLastName( string FirstName , string LastName)
+    {
+           return _dealershipDbContext.Customers
+        .Include(customer => customer.Cars)
+            .FirstOrDefault(customer => customer.FirstName == FirstName && customer.LastName == LastName);
+    }
 
 }

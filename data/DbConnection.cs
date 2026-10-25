@@ -1,5 +1,6 @@
 using Npgsql;
 using Dealership.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class DbConnection
 {
@@ -8,7 +9,12 @@ public class DbConnection
     {
         this.dealershipDbContext = dealershipDbContext;
     }
-// les clients et les voitures lus dans les CSV, puis enregistrement
+    public void ClearDb()
+    {
+        
+        dealershipDbContext.Cars.ExecuteDelete();
+        dealershipDbContext.Customers.ExecuteDelete();
+    }
     public void InitDb(List<Customer> customers, List<Car> cars)
     {
         // éviter la réimportation du csv 

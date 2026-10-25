@@ -8,5 +8,6 @@ public interface ICustomerRepository
     
     Customer ? GetCustomerById( Guid id);
     
+    Customer ? GetCustomerByFirstandLastName( string FirstName , string LastName);
 
 }

@@ -73,6 +73,7 @@ class Program
             cars.Add(car);
         }
         dbConnection.InitDb(customers, cars);
+        
     }
 
     static void Main()

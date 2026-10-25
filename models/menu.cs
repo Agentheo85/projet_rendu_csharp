@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Dealership.Interfaces;
+using Dealership.Models;
 public class Menu
 {
 // - Voir l’ensemble des voitures 
@@ -24,12 +25,79 @@ public class Menu
   
               using var scope = DbUtils.host.Services.CreateScope();
             DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
+            ICarRepository carsRepository = scope.ServiceProvider.GetRequiredService<ICarRepository>();
+            var listCustomers = carsRepository.GetAllCars();
+            foreach (var customers in listCustomers)
+            {
+                Console.WriteLine(customers.GetPresentableName());
+            }
+        }},
+         new Option {Name= "GetAllCustomers", Descriptions = "Get all customers from the db" , Args = [] , CustomFunction = (args) => 
+        {
+  
+              using var scope = DbUtils.host.Services.CreateScope();
+            DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
             ICustomerRepository customersRepository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
             var listCustomers = customersRepository.GetAllCustomer();
             foreach (var customers in listCustomers)
             {
                 Console.WriteLine(customers.GetFullName());
             }
+        }},
+          new Option {Name= "Get Car Info", Descriptions = "Get Infos of the cars and the owners" , Args = ["CarName"] , CustomFunction = (args) => 
+        {
+  
+              using var scope = DbUtils.host.Services.CreateScope();
+             DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
+            ICarRepository carsRepository = scope.ServiceProvider.GetRequiredService<ICarRepository>();
+            Car? car = carsRepository.GetCarByName(args[0]);
+            var table = new Table();
+  
+            // Add columns https://spectreconsole.net/console/widgets/table/
+            table.AddColumn("Brand");
+            table.AddColumn("Model");
+            table.AddColumn("Year");
+            table.AddColumn("Price");
+            table.AddRow(car.Brand,car.Model,car.Year.ToString(),car.Price.ToString()+" €");
+            AnsiConsole.Write(table);
+        
+           
+        }},
+           new Option {Name= "Get Customer Info", Descriptions = "Get Infos of the customer and the cars he owns" , Args = ["FirstName","LastName"] , CustomFunction = (args) => 
+        {
+  
+              using var scope = DbUtils.host.Services.CreateScope();
+           DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
+            ICustomerRepository customersRepository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+            Customer? customer = customersRepository.GetCustomerByFirstandLastName(args[0],args[1]);
+            var table = new Table();
+  
+            // Add columns https://spectreconsole.net/console/widgets/table/
+            table.AddColumn("FirstName");
+            table.AddColumn("LastName");
+            table.AddColumn("birth");
+            table.AddColumn("Phone");
+            table.AddColumn("Email");
+
+            table.AddRow(customer.FirstName,customer.LastName,customer.BirthDate.ToString(),customer.Phone,customer.Email);
+            AnsiConsole.Write(table);
+        
+           
+        }},
+          new Option {Name= "Reset Db", Descriptions = "Clear Db" , Args = [] , CustomFunction = (args) => 
+        {
+  
+                  using var scope = DbUtils.host.Services.CreateScope();
+             DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
+           
+AnsiConsole.Status()
+        .Start("Reset de la DB", ctx =>
+        {
+        dbConnection.ClearDb();
+        });
+  
+    AnsiConsole.MarkupLine("[red]Db Reset[/]");   
+
         }}
     };
     

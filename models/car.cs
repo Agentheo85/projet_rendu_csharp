@@ -27,4 +27,9 @@ public class Car
     [Column("sold")]
     public bool Sold { get; set; }
     public List<Customer> Owners { get; set; } = [];
+
+    public string GetPresentableName()
+    {
+        return Brand + " " + Model;
+    }
 }

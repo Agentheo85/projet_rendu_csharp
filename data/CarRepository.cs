@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Dealership.Interfaces;
 using Dealership.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 public class CarRepository : ICarRepository
 {
@@ -21,6 +22,10 @@ public class CarRepository : ICarRepository
     {
         return _dealershipDbContext.Cars
             .FirstOrDefault(car => car.Id == id);
+    }
+    public Car? GetCarByName(string name)
+    {
+        return _dealershipDbContext.Cars.FirstOrDefault(car => car.Model == name);
     }
 
 }
