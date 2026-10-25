@@ -9,6 +9,15 @@ posséder chacun que 2 voitures.
 Une fois l’initialisation faite, un menu en ligne de commande doit permettre de : - Voir l’ensemble des voitures - Voir l’ensemble des clients - Avoir plus d’information sur une voiture en particulier (ses caractéristiques, à qui elle appartient, …) - Avoir plus d’information sur un client en particulier (ses informations, quelles voitures il possède, …) - Vendre une voiture à un client que si elle n’est pas vendue - Changer la voiture de client si elle est déjà vendue - Combien vous avez gagné avec les voitures vendues dans la semaine
 Rendu sur Git, avec un beau readme, sans franglais, avec des commentaires et en appliqua
 
+# Proceder
+
+- Realiser par Théo et Noann
+- Le module https://spectreconsole.net/console/ nous a beaucoup faciliter la tache pour la creation de menu et d'affichage , ils nous a donc permis de gagner du temps
+
+# Notes
+
+- J'ai pris du temps a faire la commands Weekly car j'ai oublier de faire la migration qui ma donc provoquer des erreurs.
+
 # Setup
 
     - dotnet tool install --global dotnet-ef
@@ -23,7 +32,7 @@ Rendu sur Git, avec un beau readme, sans franglais, avec des commentaires et en 
 
 J'ai decider d'ajouter le module Spectre Console pour se consacrer sur le plus important , ce module permet d'avoir un menu console.
 
-# Base de données (Docker)
+# Base de données (Docker) ( Celui ci est generer par ia )
 
 La base PostgreSQL tourne dans un conteneur Docker défini dans `docker-compose.yml`.
 Les identifiants correspondent à la chaîne de connexion de `appsettings.json` :

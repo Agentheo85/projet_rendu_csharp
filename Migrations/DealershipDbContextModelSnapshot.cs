@@ -62,6 +62,10 @@ namespace csharp_projet.Migrations
                         .HasColumnType("numeric(10,2)")
                         .HasColumnName("price");
 
+                    b.Property<DateTime?>("SaleDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sale_date");
+
                     b.Property<bool>("Sold")
                         .HasColumnType("boolean")
                         .HasColumnName("sold");

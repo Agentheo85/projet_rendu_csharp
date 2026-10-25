@@ -72,6 +72,31 @@ class Program
 
             cars.Add(car);
         }
+
+        #region Seeder Sales Cars
+        int maxCar = 2;
+        Random random = new Random();
+
+        for (int i = 0; i < cars.Count; i++)
+        {
+            Car car = cars[i];
+
+            if (!car.Sold) continue;
+
+            List<Customer> availableCustomers = customers.Where(customer => customer.Cars.Count < maxCar).ToList();
+
+            if (availableCustomers.Count == 0)
+            {
+                car.Sold = false;
+                continue;
+            }
+
+            Customer buyer = availableCustomers[random.Next(availableCustomers.Count)]; // on prend un client aleatoire dans la liste des clients avec moin de 2 vehicues et on lui donne une voiture
+            car.Owners.Add(buyer);
+            buyer.Cars.Add(car);
+            car.SaleDate = DateTime.UtcNow;
+        }
+        #endregion
         dbConnection.InitDb(customers, cars);
         
     }

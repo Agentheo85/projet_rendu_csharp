@@ -26,6 +26,10 @@ public class Car
 
     [Column("sold")]
     public bool Sold { get; set; }
+
+    [Column("sale_date")]
+    public DateTime? SaleDate { get; set; }
+
     public List<Customer> Owners { get; set; } = [];
 
     public string GetPresentableName()
