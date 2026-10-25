@@ -1,20 +1,21 @@
-using CoursSupDeVinci.InterfaceRepository;
 using Microsoft.EntityFrameworkCore;
+using Dealership.Interfaces;
+using Dealership.Models;
 
 namespace CoursSupDeVinci;
 
 public class CustomerRepository : ICustomerRepository
 {
-    private readonly DealershipDbContext dealershipDbContext;
+    private readonly DealershipDbContext _dealershipDbContext;
 
-    public PersonRepository(DealershipDbContext dealershipDbContext)
+    public CustomerRepository(DealershipDbContext dealershipDbContext)
     {
         _dealershipDbContext = dealershipDbContext;
     }
 
     public List<Customer> GetAllCustomer()
     {
-        return _dealershipDbContext.Customer.ToList();
+        return _dealershipDbContext.Customers.ToList();
     }
 
     public Customer? GetCustomerById(Guid id)

@@ -3,6 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 public class DealershipDbContext : DbContext
 {
+ // --- Tables principales ---
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Car> Cars { get; set; }
+
+       public DealershipDbContext(DbContextOptions<DealershipDbContext> options)
+        : base(options)
+    {
+    }
+    
+    // Constructeur vide pour EF CLI
+    public DealershipDbContext() { }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
        
@@ -23,11 +36,7 @@ public class DealershipDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // Charger la configuration manuellement
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(@"appsettings.json", 
-                optional: false, reloadOnChange: true)
-            .Build();
+        var configuration = ConfigUtils.GetConfig;
         
         if (!optionsBuilder.IsConfigured)
         {

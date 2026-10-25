@@ -11,13 +11,14 @@ Rendu sur Git, avec un beau readme, sans franglais, avec des commentaires et en 
 
 # Setup
 
+    - dotnet tool install --global dotnet-ef
     - dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
     - dotnet add package Microsoft.EntityFrameworkCore.Design
     - dotnet add package Microsoft.Extensions.Configuration.EnvironmentVariables
     - dotnet add package Microsoft.Extensions.Hosting
     - dotnet add package Spectre.Console
-    - dotnet ef migration add InitialCreate
-    - donnet ef database update
+    - dotnet ef migrations add InitialCreate
+    - dotnet ef database update
     - dotnet ef dbcontext list
 
 J'ai decider d'ajouter le module Spectre Console pour se consacrer sur le plus important , ce module permet d'avoir un menu console.

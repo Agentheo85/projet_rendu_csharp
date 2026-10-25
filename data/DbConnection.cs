@@ -1,6 +1,5 @@
-using Dealership.Data;
 using Npgsql;
-
+using Dealership.Models;
 namespace CoursSupDeVinci;
 
 public class DbConnection
