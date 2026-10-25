@@ -327,17 +327,11 @@ AnsiConsole.Status()
      
     }
 
-    //https://dotnetperls.com/console-color
-
-    private static void InitInteraction()
-    {
-       
-    }
+   
 
     public static void InitMenu(string prefixe)
     {
         DisplayMenu();
-        InitInteraction();
     }
 }
 
