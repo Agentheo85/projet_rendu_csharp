@@ -1,14 +1,16 @@
 ﻿using Dealership.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+public class DealershipDbContext : DbContext
+{
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
        
         // EF crée une table de liaison, ici nommée explicitement
         modelBuilder.Entity<Customer>()
             .HasMany(customer => customer.Cars)
             .WithMany(car => car.Owners)
-            .UsingEntity(liaison => liaison.ToTable("CustomerCars"));
+            .UsingEntity(liaison => liaison.ToTable("CustomerCars")); // sert de table de liaison
 
         // le prix est stocké avec 2 décimales (10 chiffres au total)
         modelBuilder.Entity<Car>()
@@ -33,3 +35,5 @@ using Microsoft.Extensions.Configuration;
         }
     }
 
+
+}
