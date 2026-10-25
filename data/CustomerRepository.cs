@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Dealership.Interfaces;
 using Dealership.Models;
 
-namespace CoursSupDeVinci;
 
 public class CustomerRepository : ICustomerRepository
 {
@@ -15,12 +14,13 @@ public class CustomerRepository : ICustomerRepository
 
     public List<Customer> GetAllCustomer()
     {
-        return _dealershipDbContext.Customers.ToList();
+        return _dealershipDbContext.Customers.Include(customer=>customer.Cars).ToList(); // include sert a ajouter les class Cars sinon ef le fait aps tout seul
     }
 
     public Customer? GetCustomerById(Guid id)
     {
         return _dealershipDbContext.Customers
+        .Include(customer => customer.Cars)
             .FirstOrDefault(customer => customer.Id == id);
     }
 

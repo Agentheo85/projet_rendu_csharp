@@ -1,6 +1,5 @@
 using Npgsql;
 using Dealership.Models;
-namespace CoursSupDeVinci;
 
 public class DbConnection
 {
@@ -10,7 +9,7 @@ public class DbConnection
         this.dealershipDbContext = dealershipDbContext;
     }
 // les clients et les voitures lus dans les CSV, puis enregistrement
-    public void initDb(List<Customer> customers, List<Car> cars)
+    public void InitDb(List<Customer> customers, List<Car> cars)
     {
         // éviter la réimportation du csv 
         if (dealershipDbContext.Customers.Any()) return;

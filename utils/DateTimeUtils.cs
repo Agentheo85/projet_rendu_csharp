@@ -8,7 +8,7 @@ public class DateTimeUtils
         if (
             DateTime.TryParseExact(
                 date ?? "",
-                "dd-MM-yyyy",
+                "yyyy-MM-dd", // 1983-08-18
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
                 out DateTime birtdate

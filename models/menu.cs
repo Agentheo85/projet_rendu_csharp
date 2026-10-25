@@ -1,6 +1,13 @@
 using Microsoft.VisualBasic;
 using Spectre.Console;
+using System.Globalization;
+using Dealership;
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Dealership.Interfaces;
 public class Menu
 {
 // - Voir l’ensemble des voitures 
@@ -12,10 +19,17 @@ public class Menu
 // - Combien vous avez gagné avec les voitures vendues dans la semaine
      private static Option[] options = new[]
     {
-        new Option {Name= "GetAllCars", Descriptions = "Get all cars from the db" , Args = ["userId"] , CustomFunction = (args) => 
+        new Option {Name= "GetAllCars", Descriptions = "Get all cars from the db" , Args = [] , CustomFunction = (args) => 
         {
-            string userId = args[0];
-            Console.WriteLine($"Récupération des voitures pour l'utilisateur : {userId}");
+  
+              using var scope = DbUtils.host.Services.CreateScope();
+            DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
+            ICustomerRepository customersRepository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+            var listCustomers = customersRepository.GetAllCustomer();
+            foreach (var customers in listCustomers)
+            {
+                Console.WriteLine(customers.GetFullName());
+            }
         }}
     };
     
@@ -44,7 +58,9 @@ public class Menu
 
         AnsiConsole.MarkupLine($"You selected: [yellow]{selectedOption.Name}[/]");
 
-  selectedOption.Start();
+        selectedOption.Start();
+        AnsiConsole.WriteLine();
+        DisplayMenu();
      
     }
 

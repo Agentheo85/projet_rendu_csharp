@@ -6,14 +6,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Spectre.Console;
+using Dealership.Interfaces;
 namespace Dealership.Models;
 
 
 class Program
-{
+{ 
     static void InitDb()
     {
         IConfiguration configuration = ConfigUtils.GetConfig;
+        using var scope = DbUtils.host.Services.CreateScope();
+        DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();
 
         #region csv
         string customerPath = Path.Combine(
@@ -69,7 +72,7 @@ class Program
 
             cars.Add(car);
         }
-        customers.ForEach(customer => Console.WriteLine(customer.GetFullName()));
+        dbConnection.InitDb(customers, cars);
     }
 
     static void Main()
@@ -86,7 +89,6 @@ class Program
             Console.WriteLine(configuration.GetConnectionString("Default"));
             Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
         }
-        InitDb();
         // doc AnsiConsole https://spectreconsole.net/console/
          AnsiConsole.MarkupLine("[bold blue]Projet[/] C# [green]Noann & Théo[/]");
   
@@ -100,23 +102,11 @@ class Program
   
     AnsiConsole.MarkupLine("[green]Db Initié![/]");    
         Menu.InitMenu("-");
-        // #region hôte et services
-        // var host = Host.CreateDefaultBuilder()
-        //     .ConfigureServices(services =>
-        //     {
-        //         // la chaîne de connexion à PostgreSQL vient de appsettings.json
-        //         services.AddDbContext<DealershipDbContext>(options =>
-        //             options.UseNpgsql(configuration.GetConnectionString("Default"))
-        //         );
+        #region hôte et services
+      
+        #endregion
 
-        //         services.AddTransient<DbConnection>();
-        //         services.AddTransient<ICustomerRepository, CustomerRepository>();
-        //         services.AddTransient<ICarRepository, CarRepository>();
-        //         services.AddTransient<Menu>();
-        //     })
-        //     .Build();
-        // #endregion
-
+  
         // #region enregistrement en base
         // using var scope = host.Services.CreateScope();
         // DbConnection dbConnection = scope.ServiceProvider.GetRequiredService<DbConnection>();

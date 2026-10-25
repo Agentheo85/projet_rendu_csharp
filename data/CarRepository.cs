@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Dealership.Interfaces;
 using Dealership.Models;
-namespace CoursSupDeVinci;
 
 public class CarRepository : ICarRepository
 {
