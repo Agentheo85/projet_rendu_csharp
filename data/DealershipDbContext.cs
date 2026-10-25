@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
         // EF crée une table de liaison, ici nommée explicitement
         modelBuilder.Entity<Customer>()
             .HasMany(customer => customer.Cars)
-            .WithMany(car => car.Customers)
+            .WithMany(car => car.Owners)
             .UsingEntity(liaison => liaison.ToTable("CustomerCars"));
 
         // le prix est stocké avec 2 décimales (10 chiffres au total)

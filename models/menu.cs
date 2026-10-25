@@ -12,7 +12,11 @@ public class Menu
 // - Combien vous avez gagné avec les voitures vendues dans la semaine
      private static Option[] options = new[]
     {
-        new Option {Name= "GetAllCars", Descriptions = "Get all cars from the db" , Args = []}
+        new Option {Name= "GetAllCars", Descriptions = "Get all cars from the db" , Args = ["userId"] , CustomFunction = (args) => 
+        {
+            string userId = args[0];
+            Console.WriteLine($"Récupération des voitures pour l'utilisateur : {userId}");
+        }}
     };
     
     private static string[][] commands =
@@ -37,7 +41,7 @@ public class Menu
         .PageSize(10)
         .UseConverter(option => $"{option.Name} |  {option.Descriptions})")
         .AddChoices(options));
-        
+
         AnsiConsole.MarkupLine($"You selected: [yellow]{selectedOption.Name}[/]");
 
   selectedOption.Start();
