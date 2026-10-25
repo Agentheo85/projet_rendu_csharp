@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Spectre.Console;
 namespace Dealership.Models;
 
-namespace Dealership.Models;
 
 class Program
 {
@@ -90,6 +90,18 @@ class Program
             Console.WriteLine(DateTimeUtils.ConvertToDateTime("17-12-2007").Day);
         }
         InitDb();
+        // doc AnsiConsole https://spectreconsole.net/console/
+         AnsiConsole.MarkupLine("[bold blue]Projet[/] C# [green]Noann & Théo[/]");
+  
+
+  
+    AnsiConsole.Status()
+        .Start("Initiation de la Db...", ctx =>
+        {
+            InitDb();
+        });
+  
+    AnsiConsole.MarkupLine("[green]Db Initié![/]");    
         Menu.InitMenu("-");
         // #region hôte et services
         // var host = Host.CreateDefaultBuilder()
